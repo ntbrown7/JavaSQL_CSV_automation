@@ -1,0 +1,40 @@
+import java.sql.*;
+
+public class CheckTableContents {
+    public static void main(String[] args) {
+        String url = "jdbc:mysql://localhost:3306/database_name";
+        String user = "username"; 
+        String password = "password";
+
+        try (Connection connection = DriverManager.getConnection(url, user, password);
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery("SELECT * FROM metagenome")) {
+
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            int columnCount = metaData.getColumnCount();
+
+            // Print table header
+            for (int i = 1; i <= columnCount; i++) {
+                System.out.printf("%-20s", metaData.getColumnName(i)); // Adjust the number for column width
+            }
+            System.out.println();
+
+            // Print a separator line
+            for (int i = 1; i <= columnCount; i++) {
+                System.out.printf("%-20s", "--------------------");
+            }
+            System.out.println();
+
+            // Print rows
+            while (resultSet.next()) {
+                for (int i = 1; i <= columnCount; i++) {
+                    System.out.printf("%-20s", resultSet.getString(i)); // Adjust the number for column width
+                }
+                System.out.println();
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
